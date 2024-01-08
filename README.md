@@ -17,7 +17,8 @@ JavaScript手势识别
     element.addEventListener("pointerleave", (e) => gestureRecognizer.pointerLeave(e));
     
     //Listen gesture events here
-    element.addEventListener(eventname, //tap|doubletap|longpress|pan|panend|pinch|pinchend|pinchin|pinchout|rotate|rotateend|rotatecw|rotateccw|swipe|swipeend|swipeup|swipedown|swipeleft|swiperight,
+    element.addEventListener(
+        eventname, //tap|doubletap|longpress|pan|panend|pinch|pinchend|pinchin|pinchout|rotate|rotateend|rotatecw|rotateccw|swipe|swipeend|swipeup|swipedown|swipeleft|swiperight,
         callback);
     ```
   - Also
