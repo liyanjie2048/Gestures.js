@@ -1,0 +1,47 @@
+{
+    "name": "@liyanjie2048/gestures",
+    "version": "1.0.0",
+    "author": {
+        "email": "liyanjie2048@outlook.com",
+        "name": "liyanjie2048",
+        "url": "http://Liyanjie.net"
+    },
+    "keywords": [
+        "liyanjie",
+        "gestures"
+    ],
+    "description": "Gestures",
+    "license": "MIT",
+    "devDependencies": {
+        "@rollup/plugin-typescript": "^11.1.5",
+        "@types/node": "^20.10.6",
+        "gulp": "^4.0.2",
+        "gulp-rename": "^2.0.0",
+        "gulp-uglify": "^3.0.2",
+        "rollup": "^4.9.4",
+        "tslib": "^2.6.2",
+        "typescript": "^5.3.3"
+    },
+    "files": [
+        "bundles/*",
+        "dist/**/*",
+        "package.json",
+        "README.md"
+    ],
+    "main": "dist/index.js",
+    "typings": "dist/index.d.ts",
+    "scripts": {
+        "build": "rollup -c rollup.config.js",
+        "dist": "npm run gulp dist",
+        "gulp": "gulp",
+        "rollup": "rollup",
+        "tsc": "tsc"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/liyanjie2048/Gestures.js.git"
+    },
+    "publishConfig": {
+        "registry": "https://npm.pkg.github.com/liyanjie2048"
+    }
+}

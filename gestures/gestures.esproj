@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.VisualStudio.JavaScript.Sdk/0.5.128-alpha">
+  <ItemGroup>
+    <TypeScriptConfiguration Remove="dist\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="dist\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="bundles\" />
+    <Folder Include="dist\" />
+  </ItemGroup>
+</Project>

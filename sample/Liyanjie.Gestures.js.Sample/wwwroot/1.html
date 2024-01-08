@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <base href="/" />
+    <style>
+        body {
+            margin: 0;
+            touch-action: none !important;
+        }
+
+        .gesturearea {
+            -webkit-touch-callout: none !important;
+            -webkit-user-select: none !important;
+            -webkit-user-drag: none !important;
+            touch-action: none !important;
+            user-select: none !important;
+            width: 60vw;
+            height: 60vh;
+            margin: 20vh 20vw;
+            background: #ccffcc;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 13px;
+        }
+
+        .gestureareaData {
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="gesturearea">
+        <div class="gestureareaData"></div>
+        <template id="Data_Template">
+            <p>
+                时长:{{e.duration}}<br />
+                距离:{{e.distance.toFixed(1)}}(X:{{e.distanceX}},Y:{{e.distanceY}})<br />
+                角度:{{e.angle.toFixed(1)}}<br />
+                方向:{{e.direction}}<br />
+                数量:{{e.pointerCount}}<br />
+                ({{e.startPoints[0].screenX}},{{e.startPoints[0].screenY}})→({{e.movePoints[0].screenX}},{{e.movePoints[0].screenY}})
+            </p>
+            <p>{{tap}} {{longpress}} {{pan}} {{swipe}}</p>
+            <p>{{pinch}}</p>
+            <p>{{rotate}}</p>
+        </template>
+    </div>
+
+    <script src="liyanjie.gestures.js"></script>
+    <script src="template-web.4.13.2.js"></script>
+    <script>
+        let data = {};
+        function showData(e)
+        {
+            document.querySelector('.gestureareaData').innerHTML = template('Data_Template', {
+                e: e.detail,
+                tap: data.tap,
+                longpress: data.longpress,
+                pan: data.pan,
+                swipe: data.swipe,
+                pinch: data.pinch,
+                rotate: data.rotate,
+            });
+        }
+
+        const g = liyanjie.gestures, gRecognizer = new g.GestureRecognizer([
+            new g.TapGestureRecognizer(),
+            new g.LongPressGestureRecognizer(),
+            new g.PanGestureRecognizer(),
+            new g.SwipeGestureRecognizer(g.GestureDirection.vertical | g.GestureDirection.horizontal),
+            new g.RotateGestureRecognizer(),
+            new g.PinchGestureRecognizer(),
+        ]);
+
+        const element = document.querySelector('.gesturearea');
+        element.addEventListener("pointerdown", (e) => data = {});
+        element.addEventListener("pointerdown", (e) => gRecognizer.pointerDown(e));
+        element.addEventListener("pointermove", (e) => gRecognizer.pointerMove(e));
+        element.addEventListener("pointerup", (e) => gRecognizer.pointerUp(e));
+        element.addEventListener("pointerleave", (e) => gRecognizer.pointerLeave(e));
+
+        function showTap(e)
+        {
+            data.tap = `${e.type}-√; `;
+            showData(e);
+        }
+        element.addEventListener("tap", showTap);
+        element.addEventListener("doubletap", showTap);
+
+        function showLongPress(e)
+        {
+            data.longpress = `${e.type}-√; `;
+            showData(e);
+        }
+        element.addEventListener("longpress", showLongPress);
+
+        function showPan(e)
+        {
+            data.pan = `${e.type}-√; `;
+            showData(e);
+        }
+        element.addEventListener("pan", showPan);
+        element.addEventListener("panend", showPan);
+
+        function showSwipe(e)
+        {
+            data.swipe = `${e.type}-√; `;
+            showData(e);
+        }
+        element.addEventListener("swipe", showSwipe);
+        element.addEventListener("swipeend", showSwipe);
+        element.addEventListener("swipeup", showSwipe);
+        element.addEventListener("swipedown", showSwipe);
+        element.addEventListener("swipeleft", showSwipe);
+        element.addEventListener("swiperight", showSwipe);
+
+        function showPinch(e)
+        {
+            data.pinch = `${e.type}-缩放:${e.detail.scale.toFixed(1)}; `;
+            showData(e);
+        }
+        element.addEventListener("pinch", showPinch);
+        element.addEventListener("pinchend", showPinch);
+        element.addEventListener("pinchin", showPinch);
+        element.addEventListener("pinchout", showPinch);
+
+        function showRotate(e)
+        {
+            data.rotate = `${e.type}-旋转:${e.detail.angleChange.toFixed(1)}; `;
+            showData(e);
+        }
+        element.addEventListener("rotate", showRotate);
+        element.addEventListener("rotateend", showRotate);
+        element.addEventListener("rotatecw", showRotate);
+        element.addEventListener("rotateccw", showRotate);
+    </script>
+</body>
+</html>
