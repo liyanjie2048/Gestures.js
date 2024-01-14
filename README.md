@@ -8,15 +8,21 @@ JavaScript手势识别
     ```javascript
     const element = document.querySelector('.gesturearea');
     //Register gesture recognizers
-    const gestureRecognizer = new GestureRecognizer([
-        //Recognizers here
-    ]);
+    const gestureRecognizer = new GestureRecognizer(
+        [
+            //Recognizers here
+        ], 
+        edgeDistance="default 96",      //识别为边缘的距离(Read from e.detail.edge: GestureEdge)
+        enable="default true",
+        preventDefault="default true",
+        stopPropagation="default true"
+    );
     element.addEventListener("pointerdown", (e) => gestureRecognizer.pointerDown(e));
     element.addEventListener("pointermove", (e) => gestureRecognizer.pointerMove(e));
     element.addEventListener("pointerup", (e) => gestureRecognizer.pointerUp(e));
     element.addEventListener("pointerleave", (e) => gestureRecognizer.pointerLeave(e));
     
-    //Listen gesture events here
+    //Then listen gesture events
     element.addEventListener(
         eventname, //tap|doubletap|longpress|pan|panend|pinch|pinchend|pinchin|pinchout|rotate|rotateend|rotatecw|rotateccw|swipe|swipeend|swipeup|swipedown|swipeleft|swiperight,
         callback);
@@ -24,19 +30,28 @@ JavaScript手势识别
   - Also
     ```javascript
     const element = document.querySelector('.gesturearea');
-    const gestureRecognizer = new GestureRecognizerWrapper(element,[
-        //Recognizers here
-    ]);
+    const gestureRecognizer = new GestureRecognizerWrapper(
+        element,
+        [
+            //Recognizers here
+        ],
+        edgeDistance="default 96",      //识别为边缘的距离(Read from e.detail.edge: GestureEdge)
+        enable="default true",
+        preventDefault="default true",
+        stopPropagation="default true");
   
     //Then listen gesture events
+    element.addEventListener(
+        eventname, //tap|doubletap|longpress|pan|panend|pinch|pinchend|pinchin|pinchout|rotate|rotateend|rotatecw|rotateccw|swipe|swipeend|swipeup|swipedown|swipeleft|swiperight,
+        callback);
     ```
 - #### LongPressGestureRecognizer
   - Usage
     ```javascript
     [
         new LongPressGestureRecognizer(
-            minDuration="default 500"  //识别为LongPress的最小millionseconds
-            maxDistance="default 10"  //识别为Tap的最大pointermove distance
+            minDuration="default 500",  //识别为LongPress的最小millionseconds
+            maxDistance="default 10"    //识别为Tap的最大pointermove distance
         ),
     ]
     ```
@@ -70,9 +85,9 @@ JavaScript手势识别
     ```javascript
     [
         new SwipeGestureRecognizer(
-            direction="default GestureDirection.Horizontal"  //可以组合：Up|Down==Vertical or Left|Right == Horizontal or Up|Down|Left|Right == Horizontal|Vertical
-            maxDuration="default 300"  //识别SwipeUp、SwipeDown、SwipeLeft、SwipeRight的最大millionseconds
-            minDistance="default 20"  //识别SwipeUp、SwipeDown、SwipeLeft、SwipeRight的最大pointermove distance
+            direction="default GestureDirection.Horizontal",  //可以组合：Up|Down==Vertical or Left|Right == Horizontal or Up|Down|Left|Right == Horizontal|Vertical
+            maxDuration="default 300",  //识别SwipeUp、SwipeDown、SwipeLeft、SwipeRight的最大millionseconds
+            minDistance="default 20"    //识别SwipeUp、SwipeDown、SwipeLeft、SwipeRight的最大pointermove distance
         ),
     ]
     ```
@@ -81,10 +96,10 @@ JavaScript手势识别
     ```javascript
     [
         new TapGestureRecognizer(
-            maxDuration="default 200"  //识别DoubleTap的最大millionseconds
-            maxDistance="default 10"  //识别为Tap的最大pointermove distance
-            allowDoubleTap="default true"
-            maxDoubleTapDistance="default 20"  识别为DoubleTap的最大pointermove distance
+            maxDuration="default 200",         //识别DoubleTap的最大millionseconds
+            maxDistance="default 10",          //识别为Tap的最大pointermove distance
+            allowDoubleTap="default true",
+            maxDoubleTapDistance="default 20"  //识别为DoubleTap的最大pointermove distance
         ),
     ]
     ```

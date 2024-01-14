@@ -1,5 +1,7 @@
 ﻿import { calcAngle, calcDistance } from "../Extensions";
 import { GestureDirection } from "../GestureDirection";
+import { GestureEdge } from "../GestureEdge";
+import { GestureRecognizer } from "../Recognizers/GestureRecognizer";
 
 export class GestureEventArgs
 {
@@ -8,7 +10,16 @@ export class GestureEventArgs
         public target: EventTarget,
         public startTime: Date,
         public startPoints: PointerEvent[],
-        public movePoints: PointerEvent[]) { }
+        public movePoints: PointerEvent[],
+        public edgeDistance: number)
+    {
+        const _target = this.target as HTMLElement;
+        this.width = _target.offsetWidth;
+        this.height = _target.offsetHeight;
+    }
+
+    protected width: number;
+    protected height: number;
 
     public get currentPoints()
     {
@@ -72,5 +83,37 @@ export class GestureEventArgs
             return GestureDirection.right;
         else
             return GestureDirection.right;
+    }
+    public get startEdge(): GestureEdge | undefined
+    {
+        if (!this.edgeDistance)
+            return;
+
+        let edge = 0;
+        if (this.startPrimaryPoint.offsetX < this.edgeDistance)
+            edge = edge | GestureEdge.left;
+        if (this.startPrimaryPoint.offsetY < this.edgeDistance)
+            edge = edge | GestureEdge.top;
+        if (this.width - this.startPrimaryPoint.offsetX < this.edgeDistance)
+            edge = edge | GestureEdge.right;
+        if (this.height - this.startPrimaryPoint.offsetY < this.edgeDistance)
+            edge = edge | GestureEdge.bottom;
+        return edge;
+    }
+    public get moveEdge(): GestureEdge | undefined
+    {
+        if (!this.edgeDistance)
+            return;
+
+        let edge = 0;
+        if (this.movePrimaryPoint.offsetX < this.edgeDistance)
+            edge = edge | GestureEdge.left;
+        if (this.movePrimaryPoint.offsetY < this.edgeDistance)
+            edge = edge | GestureEdge.top;
+        if (this.width - this.movePrimaryPoint.offsetX < this.edgeDistance)
+            edge = edge | GestureEdge.right;
+        if (this.height - this.movePrimaryPoint.offsetY < this.edgeDistance)
+            edge = edge | GestureEdge.bottom;
+        return edge;
     }
 }

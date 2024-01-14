@@ -6,6 +6,7 @@ exports.default = {
         file: "./bundles/liyanjie.gestures.umd.js",
         name: "liyanjie.gestures",
         format: "umd",
+        sourcemap: true
     },
     plugins: [typescript()]
 };

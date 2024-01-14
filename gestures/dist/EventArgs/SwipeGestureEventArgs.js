@@ -17,7 +17,7 @@ import { GestureEventArgs } from "./GestureEventArgs";
 var SwipeGestureEventArgs = /** @class */ (function (_super) {
     __extends(SwipeGestureEventArgs, _super);
     function SwipeGestureEventArgs(type, e) {
-        return _super.call(this, type, e.target, e.startTime, e.startPoints, e.movePoints) || this;
+        return _super.call(this, type, e.target, e.startTime, e.startPoints, e.movePoints, e.edgeDistance) || this;
     }
     return SwipeGestureEventArgs;
 }(GestureEventArgs));

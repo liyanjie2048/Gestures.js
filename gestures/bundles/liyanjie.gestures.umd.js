@@ -23,13 +23,30 @@
         GestureDirection[GestureDirection["horizontal"] = 12] = "horizontal";
     })(exports.GestureDirection || (exports.GestureDirection = {}));
 
+    var GestureEdge;
+    (function (GestureEdge) {
+        GestureEdge[GestureEdge["none"] = 0] = "none";
+        GestureEdge[GestureEdge["top"] = 1] = "top";
+        GestureEdge[GestureEdge["bottom"] = 2] = "bottom";
+        GestureEdge[GestureEdge["left"] = 4] = "left";
+        GestureEdge[GestureEdge["right"] = 8] = "right";
+        GestureEdge[GestureEdge["topLeft"] = 3] = "topLeft";
+        GestureEdge[GestureEdge["topRight"] = 9] = "topRight";
+        GestureEdge[GestureEdge["bottomLeft"] = 6] = "bottomLeft";
+        GestureEdge[GestureEdge["bottomRight"] = 10] = "bottomRight";
+    })(GestureEdge || (GestureEdge = {}));
+
     var GestureEventArgs = /** @class */ (function () {
-        function GestureEventArgs(type, target, startTime, startPoints, movePoints) {
+        function GestureEventArgs(type, target, startTime, startPoints, movePoints, edgeDistance) {
             this.type = type;
             this.target = target;
             this.startTime = startTime;
             this.startPoints = startPoints;
             this.movePoints = movePoints;
+            this.edgeDistance = edgeDistance;
+            var _target = this.target;
+            this.width = _target.offsetWidth;
+            this.height = _target.offsetHeight;
         }
         Object.defineProperty(GestureEventArgs.prototype, "currentPoints", {
             get: function () {
@@ -125,6 +142,42 @@
             enumerable: false,
             configurable: true
         });
+        Object.defineProperty(GestureEventArgs.prototype, "startEdge", {
+            get: function () {
+                if (!this.edgeDistance)
+                    return;
+                var edge = 0;
+                if (this.startPrimaryPoint.offsetX < this.edgeDistance)
+                    edge = edge | GestureEdge.left;
+                if (this.startPrimaryPoint.offsetY < this.edgeDistance)
+                    edge = edge | GestureEdge.top;
+                if (this.width - this.startPrimaryPoint.offsetX < this.edgeDistance)
+                    edge = edge | GestureEdge.right;
+                if (this.height - this.startPrimaryPoint.offsetY < this.edgeDistance)
+                    edge = edge | GestureEdge.bottom;
+                return edge;
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(GestureEventArgs.prototype, "moveEdge", {
+            get: function () {
+                if (!this.edgeDistance)
+                    return;
+                var edge = 0;
+                if (this.movePrimaryPoint.offsetX < this.edgeDistance)
+                    edge = edge | GestureEdge.left;
+                if (this.movePrimaryPoint.offsetY < this.edgeDistance)
+                    edge = edge | GestureEdge.top;
+                if (this.width - this.movePrimaryPoint.offsetX < this.edgeDistance)
+                    edge = edge | GestureEdge.right;
+                if (this.height - this.movePrimaryPoint.offsetY < this.edgeDistance)
+                    edge = edge | GestureEdge.bottom;
+                return edge;
+            },
+            enumerable: false,
+            configurable: true
+        });
         return GestureEventArgs;
     }());
 
@@ -205,7 +258,7 @@
     var LongPressGestureEventArgs = /** @class */ (function (_super) {
         __extends(LongPressGestureEventArgs, _super);
         function LongPressGestureEventArgs(type, e) {
-            return _super.call(this, type, e.target, e.startTime, e.startPoints, e.movePoints) || this;
+            return _super.call(this, type, e.target, e.startTime, e.startPoints, e.movePoints, e.edgeDistance) || this;
         }
         return LongPressGestureEventArgs;
     }(GestureEventArgs));
@@ -270,7 +323,7 @@
     var PanGestureEventArgs = /** @class */ (function (_super) {
         __extends(PanGestureEventArgs, _super);
         function PanGestureEventArgs(type, e) {
-            return _super.call(this, type, e.target, e.startTime, e.startPoints, e.movePoints) || this;
+            return _super.call(this, type, e.target, e.startTime, e.startPoints, e.movePoints, e.edgeDistance) || this;
         }
         return PanGestureEventArgs;
     }(GestureEventArgs));
@@ -330,7 +383,7 @@
     var PinchGestureEventArgs = /** @class */ (function (_super) {
         __extends(PinchGestureEventArgs, _super);
         function PinchGestureEventArgs(type, e, scale) {
-            var _this = _super.call(this, type, e.target, e.startTime, e.startPoints, e.movePoints) || this;
+            var _this = _super.call(this, type, e.target, e.startTime, e.startPoints, e.movePoints, e.edgeDistance) || this;
             _this.scale = scale;
             return _this;
         }
@@ -424,7 +477,7 @@
     var RotateGestureEventArgs = /** @class */ (function (_super) {
         __extends(RotateGestureEventArgs, _super);
         function RotateGestureEventArgs(type, e, angleChange) {
-            var _this = _super.call(this, type, e.target, e.startTime, e.startPoints, e.movePoints) || this;
+            var _this = _super.call(this, type, e.target, e.startTime, e.startPoints, e.movePoints, e.edgeDistance) || this;
             _this.angleChange = angleChange;
             return _this;
         }
@@ -525,7 +578,7 @@
     var SwipeGestureEventArgs = /** @class */ (function (_super) {
         __extends(SwipeGestureEventArgs, _super);
         function SwipeGestureEventArgs(type, e) {
-            return _super.call(this, type, e.target, e.startTime, e.startPoints, e.movePoints) || this;
+            return _super.call(this, type, e.target, e.startTime, e.startPoints, e.movePoints, e.edgeDistance) || this;
         }
         return SwipeGestureEventArgs;
     }(GestureEventArgs));
@@ -617,7 +670,7 @@
     var TapGestureEventArgs = /** @class */ (function (_super) {
         __extends(TapGestureEventArgs, _super);
         function TapGestureEventArgs(type, e) {
-            return _super.call(this, type, e.target, e.startTime, e.startPoints, e.movePoints) || this;
+            return _super.call(this, type, e.target, e.startTime, e.startPoints, e.movePoints, e.edgeDistance) || this;
         }
         return TapGestureEventArgs;
     }(GestureEventArgs));
@@ -697,11 +750,13 @@
     }());
 
     var GestureRecognizer = /** @class */ (function () {
-        function GestureRecognizer(recognizers, enable, preventDefault, stopPropagation) {
+        function GestureRecognizer(recognizers, edgeDistance, enable, preventDefault, stopPropagation) {
+            if (edgeDistance === void 0) { edgeDistance = 96; }
             if (enable === void 0) { enable = true; }
             if (preventDefault === void 0) { preventDefault = true; }
             if (stopPropagation === void 0) { stopPropagation = true; }
             this.recognizers = recognizers;
+            this.edgeDistance = edgeDistance;
             this.enable = enable;
             this.preventDefault = preventDefault;
             this.stopPropagation = stopPropagation;
@@ -778,23 +833,25 @@
             this._movePoints.delete(e.pointerId);
         };
         GestureRecognizer.prototype._createEventArgs = function (type, e) {
-            return new GestureEventArgs(type, e.target, this.startTime, Array.from(this._startPoints.values()).sort(function (_) { return _.pointerId; }), Array.from(this._movePoints.values()).sort(function (_) { return _.pointerId; }));
+            return new GestureEventArgs(type, e.target, this.startTime, Array.from(this._startPoints.values()).sort(function (_) { return _.pointerId; }), Array.from(this._movePoints.values()).sort(function (_) { return _.pointerId; }), this.edgeDistance);
         };
         return GestureRecognizer;
     }());
 
     var GestureRecognizerWrapper = /** @class */ (function () {
-        function GestureRecognizerWrapper(element, recognizers, enable, preventDefault, stopPropagation) {
+        function GestureRecognizerWrapper(element, recognizers, edgeDistance, enable, preventDefault, stopPropagation) {
+            if (edgeDistance === void 0) { edgeDistance = 96; }
             if (enable === void 0) { enable = true; }
             if (preventDefault === void 0) { preventDefault = true; }
             if (stopPropagation === void 0) { stopPropagation = true; }
             var _this = this;
             this.element = element;
             this.recognizers = recognizers;
+            this.edgeDistance = edgeDistance;
             this.enable = enable;
             this.preventDefault = preventDefault;
             this.stopPropagation = stopPropagation;
-            this.gestureRecognizer = new GestureRecognizer(recognizers, enable, preventDefault, stopPropagation);
+            this.gestureRecognizer = new GestureRecognizer(recognizers, edgeDistance, enable, preventDefault, stopPropagation);
             element.addEventListener("pointerdown", function (e) { return _this.gestureRecognizer.pointerDown(e); });
             element.addEventListener("pointermove", function (e) { return _this.gestureRecognizer.pointerMove(e); });
             element.addEventListener("pointerup", function (e) { return _this.gestureRecognizer.pointerUp(e); });
@@ -814,3 +871,4 @@
     exports.TapGestureRecognizer = TapGestureRecognizer;
 
 }));
+//# sourceMappingURL=liyanjie.gestures.umd.js.map

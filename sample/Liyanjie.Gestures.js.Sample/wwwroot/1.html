@@ -15,40 +15,44 @@
             -webkit-touch-callout: none !important;
             -webkit-user-select: none !important;
             -webkit-user-drag: none !important;
-            touch-action: none !important;
             user-select: none !important;
             width: 60vw;
             height: 60vh;
             margin: 20vh 20vw;
             background: #ccffcc;
+        }
+
+        .gesturedata {
+            pointer-events:none;
+            width: 100%;
+            height: 100%;
+            background: #ffcccc;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             font-size: 13px;
         }
-
-        .gestureareaData {
-            pointer-events: none;
-        }
     </style>
 </head>
 <body>
     <div class="gesturearea">
-        <div class="gestureareaData"></div>
-        <template id="Data_Template">
-            <p>
-                时长:{{e.duration}}<br />
-                距离:{{e.distance.toFixed(1)}}(X:{{e.distanceX}},Y:{{e.distanceY}})<br />
-                角度:{{e.angle.toFixed(1)}}<br />
-                方向:{{e.direction}}<br />
-                数量:{{e.pointerCount}}<br />
-                ({{e.startPoints[0].screenX}},{{e.startPoints[0].screenY}})→({{e.movePoints[0].screenX}},{{e.movePoints[0].screenY}})
-            </p>
-            <p>{{tap}} {{longpress}} {{pan}} {{swipe}}</p>
-            <p>{{pinch}}</p>
-            <p>{{rotate}}</p>
-        </template>
+        <div class="gesturedata"></div>
     </div>
+    <template id="Data_Template">
+        <p>
+            时长:{{e.duration}}<br />
+            距离:{{e.distance.toFixed(1)}}(X:{{e.distanceX}},Y:{{e.distanceY}})<br />
+            角度:{{e.angle.toFixed(1)}}<br />
+            方向:{{e.direction}}<br />
+            数量:{{e.pointerCount}}<br />
+            边缘:{{e.startEdge}}<br />
+            ({{e.startPoints[0].screenX}},{{e.startPoints[0].screenY}})→({{e.movePoints[0].screenX}},{{e.movePoints[0].screenY}})<br />
+            ({{e.startPoints[0].offsetX}},{{e.startPoints[0].offsetY}})→({{e.movePoints[0].offsetX}},{{e.movePoints[0].offsetY}})
+        </p>
+        <p>{{tap}} {{longpress}} {{pan}} {{swipe}}</p>
+        <p>{{pinch}}</p>
+        <p>{{rotate}}</p>
+    </template>
 
     <script src="liyanjie.gestures.js"></script>
     <script src="template-web.4.13.2.js"></script>
@@ -56,7 +60,7 @@
         let data = {};
         function showData(e)
         {
-            document.querySelector('.gestureareaData').innerHTML = template('Data_Template', {
+            document.querySelector('.gesturedata').innerHTML = template('Data_Template', {
                 e: e.detail,
                 tap: data.tap,
                 longpress: data.longpress,
@@ -74,7 +78,7 @@
             new g.SwipeGestureRecognizer(g.GestureDirection.vertical | g.GestureDirection.horizontal),
             new g.RotateGestureRecognizer(),
             new g.PinchGestureRecognizer(),
-        ]);
+        ], 96, true, false, false);
 
         const element = document.querySelector('.gesturearea');
         element.addEventListener("pointerdown", (e) => data = {});

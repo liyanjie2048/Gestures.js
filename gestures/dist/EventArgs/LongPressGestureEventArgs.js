@@ -17,7 +17,7 @@ import { GestureEventArgs } from "./GestureEventArgs";
 var LongPressGestureEventArgs = /** @class */ (function (_super) {
     __extends(LongPressGestureEventArgs, _super);
     function LongPressGestureEventArgs(type, e) {
-        return _super.call(this, type, e.target, e.startTime, e.startPoints, e.movePoints) || this;
+        return _super.call(this, type, e.target, e.startTime, e.startPoints, e.movePoints, e.edgeDistance) || this;
     }
     return LongPressGestureEventArgs;
 }(GestureEventArgs));

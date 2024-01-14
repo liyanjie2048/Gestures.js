@@ -1,12 +1,17 @@
 import { calcAngle } from "../Extensions";
 import { GestureDirection } from "../GestureDirection";
+import { GestureEdge } from "../GestureEdge";
 var GestureEventArgs = /** @class */ (function () {
-    function GestureEventArgs(type, target, startTime, startPoints, movePoints) {
+    function GestureEventArgs(type, target, startTime, startPoints, movePoints, edgeDistance) {
         this.type = type;
         this.target = target;
         this.startTime = startTime;
         this.startPoints = startPoints;
         this.movePoints = movePoints;
+        this.edgeDistance = edgeDistance;
+        var _target = this.target;
+        this.width = _target.offsetWidth;
+        this.height = _target.offsetHeight;
     }
     Object.defineProperty(GestureEventArgs.prototype, "currentPoints", {
         get: function () {
@@ -98,6 +103,42 @@ var GestureEventArgs = /** @class */ (function () {
                 return GestureDirection.right;
             else
                 return GestureDirection.right;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(GestureEventArgs.prototype, "startEdge", {
+        get: function () {
+            if (!this.edgeDistance)
+                return;
+            var edge = 0;
+            if (this.startPrimaryPoint.offsetX < this.edgeDistance)
+                edge = edge | GestureEdge.left;
+            if (this.startPrimaryPoint.offsetY < this.edgeDistance)
+                edge = edge | GestureEdge.top;
+            if (this.width - this.startPrimaryPoint.offsetX < this.edgeDistance)
+                edge = edge | GestureEdge.right;
+            if (this.height - this.startPrimaryPoint.offsetY < this.edgeDistance)
+                edge = edge | GestureEdge.bottom;
+            return edge;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(GestureEventArgs.prototype, "moveEdge", {
+        get: function () {
+            if (!this.edgeDistance)
+                return;
+            var edge = 0;
+            if (this.movePrimaryPoint.offsetX < this.edgeDistance)
+                edge = edge | GestureEdge.left;
+            if (this.movePrimaryPoint.offsetY < this.edgeDistance)
+                edge = edge | GestureEdge.top;
+            if (this.width - this.movePrimaryPoint.offsetX < this.edgeDistance)
+                edge = edge | GestureEdge.right;
+            if (this.height - this.movePrimaryPoint.offsetY < this.edgeDistance)
+                edge = edge | GestureEdge.bottom;
+            return edge;
         },
         enumerable: false,
         configurable: true

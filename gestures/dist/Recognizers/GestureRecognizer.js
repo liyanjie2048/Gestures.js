@@ -1,10 +1,12 @@
 import { GestureEventArgs } from "../EventArgs/GestureEventArgs";
 var GestureRecognizer = /** @class */ (function () {
-    function GestureRecognizer(recognizers, enable, preventDefault, stopPropagation) {
+    function GestureRecognizer(recognizers, edgeDistance, enable, preventDefault, stopPropagation) {
+        if (edgeDistance === void 0) { edgeDistance = 96; }
         if (enable === void 0) { enable = true; }
         if (preventDefault === void 0) { preventDefault = true; }
         if (stopPropagation === void 0) { stopPropagation = true; }
         this.recognizers = recognizers;
+        this.edgeDistance = edgeDistance;
         this.enable = enable;
         this.preventDefault = preventDefault;
         this.stopPropagation = stopPropagation;
@@ -81,7 +83,7 @@ var GestureRecognizer = /** @class */ (function () {
         this._movePoints.delete(e.pointerId);
     };
     GestureRecognizer.prototype._createEventArgs = function (type, e) {
-        return new GestureEventArgs(type, e.target, this.startTime, Array.from(this._startPoints.values()).sort(function (_) { return _.pointerId; }), Array.from(this._movePoints.values()).sort(function (_) { return _.pointerId; }));
+        return new GestureEventArgs(type, e.target, this.startTime, Array.from(this._startPoints.values()).sort(function (_) { return _.pointerId; }), Array.from(this._movePoints.values()).sort(function (_) { return _.pointerId; }), this.edgeDistance);
     };
     return GestureRecognizer;
 }());

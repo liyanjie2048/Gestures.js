@@ -17,7 +17,7 @@ import { GestureEventArgs } from "./GestureEventArgs";
 var PinchGestureEventArgs = /** @class */ (function (_super) {
     __extends(PinchGestureEventArgs, _super);
     function PinchGestureEventArgs(type, e, scale) {
-        var _this = _super.call(this, type, e.target, e.startTime, e.startPoints, e.movePoints) || this;
+        var _this = _super.call(this, type, e.target, e.startTime, e.startPoints, e.movePoints, e.edgeDistance) || this;
         _this.scale = scale;
         return _this;
     }

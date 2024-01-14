@@ -17,7 +17,7 @@ import { GestureEventArgs } from "./GestureEventArgs";
 var PanGestureEventArgs = /** @class */ (function (_super) {
     __extends(PanGestureEventArgs, _super);
     function PanGestureEventArgs(type, e) {
-        return _super.call(this, type, e.target, e.startTime, e.startPoints, e.movePoints) || this;
+        return _super.call(this, type, e.target, e.startTime, e.startPoints, e.movePoints, e.edgeDistance) || this;
     }
     return PanGestureEventArgs;
 }(GestureEventArgs));

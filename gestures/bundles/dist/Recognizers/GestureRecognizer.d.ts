@@ -1,6 +1,7 @@
 import { IRecognizer } from "../IRecognizer";
 export declare class GestureRecognizer {
     recognizers: IRecognizer[];
+    edgeDistance: number;
     enable: boolean;
     preventDefault: boolean;
     stopPropagation: boolean;
@@ -11,7 +12,7 @@ export declare class GestureRecognizer {
     private get _hasPrimaryPoint();
     get active(): boolean;
     get startTime(): Date;
-    constructor(recognizers: IRecognizer[], enable?: boolean, preventDefault?: boolean, stopPropagation?: boolean);
+    constructor(recognizers: IRecognizer[], edgeDistance?: number, enable?: boolean, preventDefault?: boolean, stopPropagation?: boolean);
     pointerDown(e: PointerEvent): void;
     pointerMove(e: PointerEvent): void;
     pointerUp(e: PointerEvent): void;

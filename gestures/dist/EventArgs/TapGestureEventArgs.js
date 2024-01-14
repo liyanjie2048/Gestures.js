@@ -17,7 +17,7 @@ import { GestureEventArgs } from "./GestureEventArgs";
 var TapGestureEventArgs = /** @class */ (function (_super) {
     __extends(TapGestureEventArgs, _super);
     function TapGestureEventArgs(type, e) {
-        return _super.call(this, type, e.target, e.startTime, e.startPoints, e.movePoints) || this;
+        return _super.call(this, type, e.target, e.startTime, e.startPoints, e.movePoints, e.edgeDistance) || this;
     }
     return TapGestureEventArgs;
 }(GestureEventArgs));

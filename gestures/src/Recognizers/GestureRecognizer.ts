@@ -15,6 +15,7 @@ export class GestureRecognizer
 
     constructor(
         public recognizers: IRecognizer[],
+        public edgeDistance = 96,
         public enable: boolean = true,
         public preventDefault: boolean = true,
         public stopPropagation: boolean = true) { }
@@ -103,6 +104,7 @@ export class GestureRecognizer
             e.target,
             this.startTime,
             Array.from(this._startPoints.values()).sort(_ => _.pointerId),
-            Array.from(this._movePoints.values()).sort(_ => _.pointerId));
+            Array.from(this._movePoints.values()).sort(_ => _.pointerId),
+            this.edgeDistance);
     }
 }

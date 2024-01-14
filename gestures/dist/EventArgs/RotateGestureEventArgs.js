@@ -17,7 +17,7 @@ import { GestureEventArgs } from "./GestureEventArgs";
 var RotateGestureEventArgs = /** @class */ (function (_super) {
     __extends(RotateGestureEventArgs, _super);
     function RotateGestureEventArgs(type, e, angleChange) {
-        var _this = _super.call(this, type, e.target, e.startTime, e.startPoints, e.movePoints) || this;
+        var _this = _super.call(this, type, e.target, e.startTime, e.startPoints, e.movePoints, e.edgeDistance) || this;
         _this.angleChange = angleChange;
         return _this;
     }
