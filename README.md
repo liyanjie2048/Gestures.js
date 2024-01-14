@@ -12,7 +12,7 @@ JavaScript手势识别
         [
             //Recognizers here
         ], 
-        edgeDistance="default 96",      //识别为边缘的距离(Read from e.detail.edge: GestureEdge)
+        edgeDistance="default 75",      //识别为边缘的距离(Read from e.detail.edge: GestureEdge)
         enable="default true",
         preventDefault="default true",
         stopPropagation="default true"
@@ -35,7 +35,7 @@ JavaScript手势识别
         [
             //Recognizers here
         ],
-        edgeDistance="default 96",      //识别为边缘的距离(Read from e.detail.edge: GestureEdge)
+        edgeDistance="default 75",      //识别为边缘的距离(Read from e.detail.edge: GestureEdge)
         enable="default true",
         preventDefault="default true",
         stopPropagation="default true");
