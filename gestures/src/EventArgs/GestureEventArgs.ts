@@ -16,7 +16,11 @@ export class GestureEventArgs
             .map(_ => ({ movePoint: _, startPoint: this.startPoints.find(__ => __.pointerId === _.pointerId) }))
             .filter(_ => _.startPoint !== undefined);
     }
-    public get primaryPoint(): PointerEvent | undefined
+    public get startPrimaryPoint(): PointerEvent | undefined
+    {
+        return this.startPoints.find(_ => _.isPrimary);
+    }
+    public get movePrimaryPoint(): PointerEvent | undefined
     {
         return this.movePoints.find(_ => _.isPrimary);
     }

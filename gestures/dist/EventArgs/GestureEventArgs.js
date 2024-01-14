@@ -18,7 +18,14 @@ var GestureEventArgs = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
-    Object.defineProperty(GestureEventArgs.prototype, "primaryPoint", {
+    Object.defineProperty(GestureEventArgs.prototype, "startPrimaryPoint", {
+        get: function () {
+            return this.startPoints.find(function (_) { return _.isPrimary; });
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(GestureEventArgs.prototype, "movePrimaryPoint", {
         get: function () {
             return this.movePoints.find(function (_) { return _.isPrimary; });
         },

@@ -10,7 +10,8 @@ export declare class GestureEventArgs {
         movePoint: PointerEvent;
         startPoint: PointerEvent;
     }[];
-    get primaryPoint(): PointerEvent | undefined;
+    get startPrimaryPoint(): PointerEvent | undefined;
+    get movePrimaryPoint(): PointerEvent | undefined;
     get pointerCount(): number;
     get duration(): number;
     get distanceX(): number;
