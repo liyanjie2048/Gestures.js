@@ -8,7 +8,7 @@ export class GestureRecognizerWrapper
     constructor(
         public element: Element,
         public recognizers: IRecognizer[],
-        public edgeDistance: number = 96,
+        public edgeDistance: number = 75,
         public enable: boolean = true,
         public preventDefault: boolean = true,
         public stopPropagation: boolean = true)

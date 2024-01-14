@@ -15,7 +15,7 @@ export class GestureRecognizer
 
     constructor(
         public recognizers: IRecognizer[],
-        public edgeDistance = 96,
+        public edgeDistance = 75,
         public enable: boolean = true,
         public preventDefault: boolean = true,
         public stopPropagation: boolean = true) { }

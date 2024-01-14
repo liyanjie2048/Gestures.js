@@ -1,7 +1,7 @@
 import { GestureEventArgs } from "../EventArgs/GestureEventArgs";
 var GestureRecognizer = /** @class */ (function () {
     function GestureRecognizer(recognizers, edgeDistance, enable, preventDefault, stopPropagation) {
-        if (edgeDistance === void 0) { edgeDistance = 96; }
+        if (edgeDistance === void 0) { edgeDistance = 75; }
         if (enable === void 0) { enable = true; }
         if (preventDefault === void 0) { preventDefault = true; }
         if (stopPropagation === void 0) { stopPropagation = true; }
