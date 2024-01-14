@@ -5,7 +5,7 @@ export enum GestureEdge
     bottom = 2,
     left = 4,
     right = 8,
-    topLeft = 3,
+    topLeft = 5,
     topRight = 9,
     bottomLeft = 6,
     bottomRight = 10,
