@@ -109,17 +109,17 @@ var GestureEventArgs = /** @class */ (function () {
     });
     Object.defineProperty(GestureEventArgs.prototype, "startEdge", {
         get: function () {
-            if (!this.edgeDistance)
+            if (!this.edgeDistance || !this.startPrimaryPoint)
                 return;
-            var edge = 0;
+            var edge = GestureEdge.none;
             if (this.startPrimaryPoint.offsetX < this.edgeDistance)
-                edge = edge | GestureEdge.left;
+                edge |= GestureEdge.left;
             if (this.startPrimaryPoint.offsetY < this.edgeDistance)
-                edge = edge | GestureEdge.top;
+                edge |= GestureEdge.top;
             if (this.width - this.startPrimaryPoint.offsetX < this.edgeDistance)
-                edge = edge | GestureEdge.right;
+                edge |= GestureEdge.right;
             if (this.height - this.startPrimaryPoint.offsetY < this.edgeDistance)
-                edge = edge | GestureEdge.bottom;
+                edge |= GestureEdge.bottom;
             return edge;
         },
         enumerable: false,
@@ -127,17 +127,17 @@ var GestureEventArgs = /** @class */ (function () {
     });
     Object.defineProperty(GestureEventArgs.prototype, "moveEdge", {
         get: function () {
-            if (!this.edgeDistance)
+            if (!this.edgeDistance || !this.movePrimaryPoint)
                 return;
-            var edge = 0;
+            var edge = GestureEdge.none;
             if (this.movePrimaryPoint.offsetX < this.edgeDistance)
-                edge = edge | GestureEdge.left;
+                edge |= GestureEdge.left;
             if (this.movePrimaryPoint.offsetY < this.edgeDistance)
-                edge = edge | GestureEdge.top;
+                edge |= GestureEdge.top;
             if (this.width - this.movePrimaryPoint.offsetX < this.edgeDistance)
-                edge = edge | GestureEdge.right;
+                edge |= GestureEdge.right;
             if (this.height - this.movePrimaryPoint.offsetY < this.edgeDistance)
-                edge = edge | GestureEdge.bottom;
+                edge |= GestureEdge.bottom;
             return edge;
         },
         enumerable: false,
