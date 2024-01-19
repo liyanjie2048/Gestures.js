@@ -7,8 +7,10 @@ JavaScript手势识别
   - Usage
     ```javascript
     const element = document.querySelector('.gesturearea');
+
     //Register gesture recognizers
-    const gestureRecognizer = new GestureRecognizer(
+    registerGestures(
+        element,
         [
             //Recognizers here
         ], 
@@ -17,10 +19,6 @@ JavaScript手势识别
         preventDefault="default true",
         stopPropagation="default true"
     );
-    element.addEventListener("pointerdown", (e) => gestureRecognizer.pointerDown(e));
-    element.addEventListener("pointermove", (e) => gestureRecognizer.pointerMove(e));
-    element.addEventListener("pointerup", (e) => gestureRecognizer.pointerUp(e));
-    element.addEventListener("pointerleave", (e) => gestureRecognizer.pointerLeave(e));
     
     //Then listen gesture events
     element.addEventListener(
@@ -30,16 +28,22 @@ JavaScript手势识别
   - Also
     ```javascript
     const element = document.querySelector('.gesturearea');
-    const gestureRecognizer = new GestureRecognizerWrapper(
+    
+    //Register gesture recognizers
+    const gestureRecognizer = new GestureRecognizer(
         element,
         [
             //Recognizers here
-        ],
+        ], 
         edgeDistance="default 75",      //识别为边缘的距离(e.detail.startEdge: GestureEdge)
         enable="default true",
         preventDefault="default true",
-        stopPropagation="default true");
-  
+        stopPropagation="default true"
+    );
+    document.addEventListener("pointerdown", (e) => element.contains(e.target) && gestureRecognizer.pointerDown(e));
+    document.addEventListener("pointermove", (e) => element.contains(e.target) ? gestureRecognizer.pointerMove(e) : gestureRecognizer.pointerLeave(e));
+    document.addEventListener("pointerup", (e) => element.contains(e.target) && gestureRecognizer.pointerUp(e));
+    
     //Then listen gesture events
     element.addEventListener(
         eventname, //tap|doubletap|longpress|pan|panend|pinch|pinchend|pinchin|pinchout|rotate|rotateend|rotatecw|rotateccw|swipe|swipeend|swipeup|swipedown|swipeleft|swiperight,
