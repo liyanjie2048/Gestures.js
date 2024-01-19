@@ -6,7 +6,12 @@
     <None Remove="dist\**" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="bundles\" />
     <Folder Include="dist\" />
+  </ItemGroup>
+  <ItemGroup>
+    <TypeScriptConfiguration Remove="bundles\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="bundles\**" />
   </ItemGroup>
 </Project>

@@ -8,7 +8,7 @@ export class GestureEventArgs
     constructor(
         public type: string | undefined,
         public target: EventTarget,
-        public startTime: Date,
+        public startTime: number,
         public startPoints: PointerEvent[],
         public movePoints: PointerEvent[],
         public edgeDistance: number)
@@ -41,7 +41,7 @@ export class GestureEventArgs
     }
     public get duration(): number
     {
-        return new Date().getTime() - this.startTime.getTime();
+        return new Date().getTime() - this.startTime;
     }
     public get distanceX(): number
     {

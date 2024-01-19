@@ -4,15 +4,6 @@
     (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory((global.liyanjie = global.liyanjie || {}, global.liyanjie.gestures = {})));
 })(this, (function (exports) { 'use strict';
 
-    function calcDistance(p1, p2) {
-        var x = p2.screenX - p1.screenX;
-        var y = p2.screenY - p1.screenY;
-        return Math.sqrt((x * x) + (y * y));
-    }
-    function calcAngle(p1, p2) {
-        return Math.atan2(p2.screenY - p1.screenY, p2.screenX - p1.screenX) * 180 / Math.PI;
-    }
-
     exports.GestureDirection = void 0;
     (function (GestureDirection) {
         GestureDirection[GestureDirection["up"] = 1] = "up";
@@ -23,7 +14,7 @@
         GestureDirection[GestureDirection["horizontal"] = 12] = "horizontal";
     })(exports.GestureDirection || (exports.GestureDirection = {}));
 
-    var GestureEdge;
+    exports.GestureEdge = void 0;
     (function (GestureEdge) {
         GestureEdge[GestureEdge["none"] = 0] = "none";
         GestureEdge[GestureEdge["top"] = 1] = "top";
@@ -34,7 +25,16 @@
         GestureEdge[GestureEdge["topRight"] = 9] = "topRight";
         GestureEdge[GestureEdge["bottomLeft"] = 6] = "bottomLeft";
         GestureEdge[GestureEdge["bottomRight"] = 10] = "bottomRight";
-    })(GestureEdge || (GestureEdge = {}));
+    })(exports.GestureEdge || (exports.GestureEdge = {}));
+
+    function calcDistance(p1, p2) {
+        var x = p2.screenX - p1.screenX;
+        var y = p2.screenY - p1.screenY;
+        return Math.sqrt((x * x) + (y * y));
+    }
+    function calcAngle(p1, p2) {
+        return Math.atan2(p2.screenY - p1.screenY, p2.screenX - p1.screenX) * 180 / Math.PI;
+    }
 
     var GestureEventArgs = /** @class */ (function () {
         function GestureEventArgs(type, target, startTime, startPoints, movePoints, edgeDistance) {
@@ -81,7 +81,7 @@
         });
         Object.defineProperty(GestureEventArgs.prototype, "duration", {
             get: function () {
-                return new Date().getTime() - this.startTime.getTime();
+                return new Date().getTime() - this.startTime;
             },
             enumerable: false,
             configurable: true
@@ -146,15 +146,15 @@
             get: function () {
                 if (!this.edgeDistance || !this.startPrimaryPoint)
                     return;
-                var edge = GestureEdge.none;
+                var edge = exports.GestureEdge.none;
                 if (this.startPrimaryPoint.offsetX < this.edgeDistance)
-                    edge |= GestureEdge.left;
+                    edge |= exports.GestureEdge.left;
                 if (this.startPrimaryPoint.offsetY < this.edgeDistance)
-                    edge |= GestureEdge.top;
+                    edge |= exports.GestureEdge.top;
                 if (this.width - this.startPrimaryPoint.offsetX < this.edgeDistance)
-                    edge |= GestureEdge.right;
+                    edge |= exports.GestureEdge.right;
                 if (this.height - this.startPrimaryPoint.offsetY < this.edgeDistance)
-                    edge |= GestureEdge.bottom;
+                    edge |= exports.GestureEdge.bottom;
                 return edge;
             },
             enumerable: false,
@@ -164,21 +164,111 @@
             get: function () {
                 if (!this.edgeDistance || !this.movePrimaryPoint)
                     return;
-                var edge = GestureEdge.none;
+                var edge = exports.GestureEdge.none;
                 if (this.movePrimaryPoint.offsetX < this.edgeDistance)
-                    edge |= GestureEdge.left;
+                    edge |= exports.GestureEdge.left;
                 if (this.movePrimaryPoint.offsetY < this.edgeDistance)
-                    edge |= GestureEdge.top;
+                    edge |= exports.GestureEdge.top;
                 if (this.width - this.movePrimaryPoint.offsetX < this.edgeDistance)
-                    edge |= GestureEdge.right;
+                    edge |= exports.GestureEdge.right;
                 if (this.height - this.movePrimaryPoint.offsetY < this.edgeDistance)
-                    edge |= GestureEdge.bottom;
+                    edge |= exports.GestureEdge.bottom;
                 return edge;
             },
             enumerable: false,
             configurable: true
         });
         return GestureEventArgs;
+    }());
+
+    var GestureRecognizer = /** @class */ (function () {
+        function GestureRecognizer(element, recognizers, edgeDistance, enable, preventDefault, stopPropagation) {
+            if (edgeDistance === void 0) { edgeDistance = 75; }
+            if (enable === void 0) { enable = true; }
+            if (preventDefault === void 0) { preventDefault = true; }
+            if (stopPropagation === void 0) { stopPropagation = true; }
+            this.element = element;
+            this.recognizers = recognizers;
+            this.edgeDistance = edgeDistance;
+            this.enable = enable;
+            this.preventDefault = preventDefault;
+            this.stopPropagation = stopPropagation;
+            this._startPoints = new Map();
+            this._movePoints = new Map();
+        }
+        Object.defineProperty(GestureRecognizer.prototype, "_hasPrimaryPoint", {
+            get: function () { return Array.from(this._movePoints.values()).some(function (_) { return _.isPrimary; }); },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(GestureRecognizer.prototype, "active", {
+            get: function () { return this._active; },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(GestureRecognizer.prototype, "startTime", {
+            get: function () { return this._startTime; },
+            enumerable: false,
+            configurable: true
+        });
+        GestureRecognizer.prototype.pointerDown = function (e) {
+            this.preventDefault && e.preventDefault();
+            this.stopPropagation && e.stopPropagation();
+            if (!this.enable)
+                return;
+            this._active = true;
+            this._startTime = new Date().getTime();
+            this._startPoints.set(e.pointerId, e);
+            this._movePoints.set(e.pointerId, e);
+            var event = this._createEventArgs("gesturestart", e);
+            this.recognizers.forEach(function (recognizer) { return recognizer.gestureStart(event); });
+        };
+        GestureRecognizer.prototype.pointerMove = function (e) {
+            this.preventDefault && e.preventDefault();
+            this.stopPropagation && e.stopPropagation();
+            if (!this.enable)
+                return;
+            if (this._active)
+                this._movePoints.set(e.pointerId, e);
+            if (this._active && this._hasPrimaryPoint) {
+                var event_1 = this._createEventArgs("gesturemove", e);
+                this.recognizers.forEach(function (recognizer) { return recognizer.gestureMove(event_1); });
+            }
+        };
+        GestureRecognizer.prototype.pointerUp = function (e) {
+            this.preventDefault && e.preventDefault();
+            this.stopPropagation && e.stopPropagation();
+            if (!this.enable)
+                return;
+            if (this._active && this._hasPrimaryPoint) {
+                var event_2 = this._createEventArgs("gestureup", e);
+                this.recognizers.forEach(function (recognizer) { return recognizer.gestureEnd(event_2); });
+            }
+            this._clear(e);
+        };
+        GestureRecognizer.prototype.pointerLeave = function (e) {
+            this.preventDefault && e.preventDefault();
+            this.stopPropagation && e.stopPropagation();
+            if (!this.enable)
+                return;
+            if (this._active && this._hasPrimaryPoint) {
+                var event_3 = this._createEventArgs("gestureleave", e);
+                this.recognizers.forEach(function (recognizer) { return recognizer.gestureLeave(event_3); });
+            }
+            this._clear(e);
+        };
+        GestureRecognizer.prototype._clear = function (e) {
+            if (e.isPrimary) {
+                this._active = false;
+                delete this._startTime;
+            }
+            this._startPoints.delete(e.pointerId);
+            this._movePoints.delete(e.pointerId);
+        };
+        GestureRecognizer.prototype._createEventArgs = function (type, e) {
+            return new GestureEventArgs(type, this.element, this.startTime, Array.from(this._startPoints.values()).sort(function (_) { return _.pointerId; }), Array.from(this._movePoints.values()).sort(function (_) { return _.pointerId; }), this.edgeDistance);
+        };
+        return GestureRecognizer;
     }());
 
     /******************************************************************************
@@ -727,7 +817,7 @@
             if (e.distance > this.maxDistance)
                 return;
             if (this.allowDoubleTap
-                && (e.startTime.getTime() - this._lastTapTime.getTime()) < this.maxDuration
+                && (e.startTime - this._lastTapTime.getTime()) < this.maxDuration
                 && this._lastTapPoint
                 && calcDistance(this._lastTapPoint, e.movePoints[0]) < this.maxDoubleTapDistance) {
                 e.target.dispatchEvent(this._createEventArgs("doubletap", e));
@@ -749,126 +839,54 @@
         return TapGestureRecognizer;
     }());
 
-    var GestureRecognizer = /** @class */ (function () {
-        function GestureRecognizer(recognizers, edgeDistance, enable, preventDefault, stopPropagation) {
-            if (edgeDistance === void 0) { edgeDistance = 75; }
-            if (enable === void 0) { enable = true; }
-            if (preventDefault === void 0) { preventDefault = true; }
-            if (stopPropagation === void 0) { stopPropagation = true; }
-            this.recognizers = recognizers;
-            this.edgeDistance = edgeDistance;
-            this.enable = enable;
-            this.preventDefault = preventDefault;
-            this.stopPropagation = stopPropagation;
-            this._startPoints = new Map();
-            this._movePoints = new Map();
+    function registerGestures(elementOrSelectors, recognizersOrOptions, edgeDistance, enable, preventDefault, stopPropagation) {
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
+        if (edgeDistance === void 0) { edgeDistance = 75; }
+        if (enable === void 0) { enable = true; }
+        if (preventDefault === void 0) { preventDefault = true; }
+        if (stopPropagation === void 0) { stopPropagation = true; }
+        var gestureElement;
+        if (elementOrSelectors instanceof Element)
+            gestureElement = elementOrSelectors;
+        else if (typeof elementOrSelectors === 'string')
+            gestureElement = document.querySelector(elementOrSelectors);
+        if (!gestureElement)
+            return;
+        var gestureRecognizers;
+        if (Array.isArray(recognizersOrOptions)) {
+            gestureRecognizers = recognizersOrOptions;
         }
-        Object.defineProperty(GestureRecognizer.prototype, "_hasPrimaryPoint", {
-            get: function () { return Array.from(this._movePoints.values()).some(function (_) { return _.isPrimary; }); },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(GestureRecognizer.prototype, "active", {
-            get: function () { return this._active; },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(GestureRecognizer.prototype, "startTime", {
-            get: function () { return this._startTime; },
-            enumerable: false,
-            configurable: true
-        });
-        GestureRecognizer.prototype.pointerDown = function (e) {
-            this.preventDefault && e.preventDefault();
-            this.stopPropagation && e.stopPropagation();
-            if (!this.enable)
-                return;
-            this._active = true;
-            this._startTime = new Date();
-            this._startPoints.set(e.pointerId, e);
-            this._movePoints.set(e.pointerId, e);
-            var event = this._createEventArgs("gesturestart", e);
-            this.recognizers.forEach(function (recognizer) { return recognizer.gestureStart(event); });
-        };
-        GestureRecognizer.prototype.pointerMove = function (e) {
-            this.preventDefault && e.preventDefault();
-            this.stopPropagation && e.stopPropagation();
-            if (!this.enable)
-                return;
-            if (this._active)
-                this._movePoints.set(e.pointerId, e);
-            if (this._active && this._hasPrimaryPoint) {
-                var event_1 = this._createEventArgs("gesturemove", e);
-                this.recognizers.forEach(function (recognizer) { return recognizer.gestureMove(event_1); });
-            }
-        };
-        GestureRecognizer.prototype.pointerUp = function (e) {
-            this.preventDefault && e.preventDefault();
-            this.stopPropagation && e.stopPropagation();
-            if (!this.enable)
-                return;
-            if (this._active && this._hasPrimaryPoint) {
-                var event_2 = this._createEventArgs("gestureup", e);
-                this.recognizers.forEach(function (recognizer) { return recognizer.gestureEnd(event_2); });
-            }
-            this._clear(e);
-        };
-        GestureRecognizer.prototype.pointerLeave = function (e) {
-            this.preventDefault && e.preventDefault();
-            this.stopPropagation && e.stopPropagation();
-            if (!this.enable)
-                return;
-            if (this._active && this._hasPrimaryPoint) {
-                var event_3 = this._createEventArgs("gestureleave", e);
-                this.recognizers.forEach(function (recognizer) { return recognizer.gestureLeave(event_3); });
-            }
-            this._clear(e);
-        };
-        GestureRecognizer.prototype._clear = function (e) {
-            if (e.isPrimary) {
-                this._active = false;
-                delete this._startTime;
-            }
-            this._startPoints.delete(e.pointerId);
-            this._movePoints.delete(e.pointerId);
-        };
-        GestureRecognizer.prototype._createEventArgs = function (type, e) {
-            return new GestureEventArgs(type, e.target, this.startTime, Array.from(this._startPoints.values()).sort(function (_) { return _.pointerId; }), Array.from(this._movePoints.values()).sort(function (_) { return _.pointerId; }), this.edgeDistance);
-        };
-        return GestureRecognizer;
-    }());
-
-    var GestureRecognizerWrapper = /** @class */ (function () {
-        function GestureRecognizerWrapper(element, recognizers, edgeDistance, enable, preventDefault, stopPropagation) {
-            if (edgeDistance === void 0) { edgeDistance = 75; }
-            if (enable === void 0) { enable = true; }
-            if (preventDefault === void 0) { preventDefault = true; }
-            if (stopPropagation === void 0) { stopPropagation = true; }
-            var _this = this;
-            this.element = element;
-            this.recognizers = recognizers;
-            this.edgeDistance = edgeDistance;
-            this.enable = enable;
-            this.preventDefault = preventDefault;
-            this.stopPropagation = stopPropagation;
-            this.gestureRecognizer = new GestureRecognizer(recognizers, edgeDistance, enable, preventDefault, stopPropagation);
-            element.addEventListener("pointerdown", function (e) { return _this.gestureRecognizer.pointerDown(e); });
-            element.addEventListener("pointermove", function (e) { return _this.gestureRecognizer.pointerMove(e); });
-            element.addEventListener("pointerup", function (e) { return _this.gestureRecognizer.pointerUp(e); });
-            element.addEventListener("pointerleave", function (e) { return _this.gestureRecognizer.pointerLeave(e); });
+        else {
+            gestureRecognizers = [];
+            recognizersOrOptions.tap && gestureRecognizers.push(new TapGestureRecognizer((_a = recognizersOrOptions.tap.maxDuration) !== null && _a !== void 0 ? _a : 200, (_b = recognizersOrOptions.tap.maxDistance) !== null && _b !== void 0 ? _b : 10, (_c = recognizersOrOptions.tap.allowDoubleTap) !== null && _c !== void 0 ? _c : true, (_d = recognizersOrOptions.tap.maxDoubleTapDistance) !== null && _d !== void 0 ? _d : 20));
+            recognizersOrOptions.longPress && gestureRecognizers.push(new LongPressGestureRecognizer((_e = recognizersOrOptions.longPress.minDuration) !== null && _e !== void 0 ? _e : 500, (_f = recognizersOrOptions.longPress.maxDistance) !== null && _f !== void 0 ? _f : 10));
+            recognizersOrOptions.pan && gestureRecognizers.push(new PanGestureRecognizer());
+            recognizersOrOptions.swipe && gestureRecognizers.push(new SwipeGestureRecognizer((_g = recognizersOrOptions.swipe.direction) !== null && _g !== void 0 ? _g : exports.GestureDirection.horizontal, (_h = recognizersOrOptions.swipe.maxDuration) !== null && _h !== void 0 ? _h : 300, (_j = recognizersOrOptions.swipe.minDistance) !== null && _j !== void 0 ? _j : 20));
+            recognizersOrOptions.rotate && gestureRecognizers.push(new RotateGestureRecognizer((_k = recognizersOrOptions.rotate.minAngle) !== null && _k !== void 0 ? _k : 10));
+            recognizersOrOptions.pinch && gestureRecognizers.push(new PinchGestureRecognizer((_l = recognizersOrOptions.pinch.minScale) !== null && _l !== void 0 ? _l : 0));
         }
-        return GestureRecognizerWrapper;
-    }());
+        var gestureRecognizer = new GestureRecognizer(gestureElement, gestureRecognizers, edgeDistance, enable, preventDefault, stopPropagation);
+        document.addEventListener("pointerdown", function (e) { return gestureElement.contains(e.target) && gestureRecognizer.pointerDown(e); });
+        document.addEventListener("pointermove", function (e) { return gestureElement.contains(e.target) ? gestureRecognizer.pointerMove(e) : gestureRecognizer.pointerLeave(e); });
+        document.addEventListener("pointerup", function (e) { return gestureElement.contains(e.target) && gestureRecognizer.pointerUp(e); });
+        return gestureRecognizer;
+    }
 
     exports.GestureEventArgs = GestureEventArgs;
     exports.GestureRecognizer = GestureRecognizer;
-    exports.GestureRecognizerWrapper = GestureRecognizerWrapper;
+    exports.LongPressGestureEventArgs = LongPressGestureEventArgs;
     exports.LongPressGestureRecognizer = LongPressGestureRecognizer;
+    exports.PanGestureEventArgs = PanGestureEventArgs;
     exports.PanGestureRecognizer = PanGestureRecognizer;
+    exports.PinchGestureEventArgs = PinchGestureEventArgs;
     exports.PinchGestureRecognizer = PinchGestureRecognizer;
+    exports.RotateGestureEventArgs = RotateGestureEventArgs;
     exports.RotateGestureRecognizer = RotateGestureRecognizer;
+    exports.SwipeGestureEventArgs = SwipeGestureEventArgs;
     exports.SwipeGestureRecognizer = SwipeGestureRecognizer;
+    exports.TapGestureEventArgs = TapGestureEventArgs;
     exports.TapGestureRecognizer = TapGestureRecognizer;
+    exports.registerGestures = registerGestures;
 
 }));
-//# sourceMappingURL=liyanjie.gestures.umd.js.map
+//# sourceMappingURL=liyanjie.gestures.js.map

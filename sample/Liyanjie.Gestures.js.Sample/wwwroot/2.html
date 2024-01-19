@@ -23,7 +23,6 @@
         }
 
         .gesturedata {
-            pointer-events: none;
             width: 100%;
             height: 100%;
             background: #ffcccc;
@@ -73,14 +72,15 @@
 
         const element = document.querySelector('.gesturearea');
         element.addEventListener("pointerdown", (e) => data = {});
-        const g = liyanjie.gestures, gWrapper = new g.GestureRecognizerWrapper(element, [
-            new g.TapGestureRecognizer(),
-            new g.LongPressGestureRecognizer(),
-            new g.PanGestureRecognizer(),
-            new g.SwipeGestureRecognizer(g.GestureDirection.vertical | g.GestureDirection.horizontal),
-            new g.RotateGestureRecognizer(),
-            new g.PinchGestureRecognizer(),
-        ]);
+
+        liyanjie.gestures.registerGestures(element, {
+            tap: {},
+            longPress: {},
+            pan: true,
+            swipe: { direction: liyanjie.gestures.GestureDirection.vertical | liyanjie.gestures.GestureDirection.horizontal },
+            rotate: {},
+            pinch: {}
+        });
 
         function showTap(e)
         {

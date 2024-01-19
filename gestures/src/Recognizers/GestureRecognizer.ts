@@ -6,7 +6,7 @@ export class GestureRecognizer
     private _startPoints: Map<number, PointerEvent> = new Map<number, PointerEvent>();
     private _movePoints: Map<number, PointerEvent> = new Map<number, PointerEvent>();
     private _active: boolean;
-    private _startTime: Date | undefined;
+    private _startTime: number | undefined;
 
     private get _hasPrimaryPoint(): boolean { return Array.from(this._movePoints.values()).some(_ => _.isPrimary); }
 
@@ -14,6 +14,7 @@ export class GestureRecognizer
     public get startTime() { return this._startTime; }
 
     constructor(
+        public element: Element,
         public recognizers: IRecognizer[],
         public edgeDistance = 75,
         public enable: boolean = true,
@@ -29,7 +30,7 @@ export class GestureRecognizer
             return;
 
         this._active = true;
-        this._startTime = new Date();
+        this._startTime = new Date().getTime();
 
         this._startPoints.set(e.pointerId, e);
         this._movePoints.set(e.pointerId, e);
@@ -101,7 +102,7 @@ export class GestureRecognizer
     {
         return new GestureEventArgs(
             type,
-            e.target,
+            this.element,
             this.startTime,
             Array.from(this._startPoints.values()).sort(_ => _.pointerId),
             Array.from(this._movePoints.values()).sort(_ => _.pointerId),

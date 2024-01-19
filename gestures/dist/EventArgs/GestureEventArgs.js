@@ -46,7 +46,7 @@ var GestureEventArgs = /** @class */ (function () {
     });
     Object.defineProperty(GestureEventArgs.prototype, "duration", {
         get: function () {
-            return new Date().getTime() - this.startTime.getTime();
+            return new Date().getTime() - this.startTime;
         },
         enumerable: false,
         configurable: true

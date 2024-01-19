@@ -3,11 +3,11 @@ import { GestureEdge } from "../GestureEdge";
 export declare class GestureEventArgs {
     type: string | undefined;
     target: EventTarget;
-    startTime: Date;
+    startTime: number;
     startPoints: PointerEvent[];
     movePoints: PointerEvent[];
     edgeDistance: number;
-    constructor(type: string | undefined, target: EventTarget, startTime: Date, startPoints: PointerEvent[], movePoints: PointerEvent[], edgeDistance: number);
+    constructor(type: string | undefined, target: EventTarget, startTime: number, startPoints: PointerEvent[], movePoints: PointerEvent[], edgeDistance: number);
     protected width: number;
     protected height: number;
     get currentPoints(): {

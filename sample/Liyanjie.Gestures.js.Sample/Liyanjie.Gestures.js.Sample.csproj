@@ -8,11 +8,13 @@
 
 	<ItemGroup>
 	  <Content Remove="wwwroot\liyanjie.gestures.js" />
+	  <Content Remove="wwwroot\liyanjie.gestures.js.map" />
 	  <Content Remove="wwwroot\liyanjie.gestures.min.js" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <None Include="wwwroot\liyanjie.gestures.js" />
+	  <None Include="wwwroot\liyanjie.gestures.js.map" />
 	  <None Include="wwwroot\liyanjie.gestures.min.js" />
 	</ItemGroup>
 

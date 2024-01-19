@@ -88,7 +88,7 @@ var TapGestureRecognizer = /** @class */ (function () {
         if (e.distance > this.maxDistance)
             return;
         if (this.allowDoubleTap
-            && (e.startTime.getTime() - this._lastTapTime.getTime()) < this.maxDuration
+            && (e.startTime - this._lastTapTime.getTime()) < this.maxDuration
             && this._lastTapPoint
             && calcDistance(this._lastTapPoint, e.movePoints[0]) < this.maxDoubleTapDistance) {
             e.target.dispatchEvent(this._createEventArgs("doubletap", e));

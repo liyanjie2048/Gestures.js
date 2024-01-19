@@ -43,7 +43,7 @@ export class TapGestureRecognizer implements IRecognizer
             return;
 
         if (this.allowDoubleTap
-            && (e.startTime.getTime() - this._lastTapTime.getTime()) < this.maxDuration
+            && (e.startTime - this._lastTapTime.getTime()) < this.maxDuration
             && this._lastTapPoint
             && calcDistance(this._lastTapPoint, e.movePoints[0]) < this.maxDoubleTapDistance)
         {
